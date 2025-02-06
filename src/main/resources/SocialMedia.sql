@@ -13,5 +13,7 @@ create table message (
     foreign key (posted_by) references  account(account_id)
 );
 
-insert into account (username, password) values ('testuser1', 'password');
-insert into message (posted_by, message_text, time_posted_epoch) values (1,'test message 1',1669947792);
+INSERT INTO account (account_id, username, password) VALUES (1, 'testuser', 'password123');
+INSERT INTO message (message_id, posted_by, message_text, time_posted_epoch) VALUES (1, 1, 'Hello World', 1707100000);
+
+
