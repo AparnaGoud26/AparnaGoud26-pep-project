@@ -11,27 +11,35 @@ import java.util.Optional;
 public class MessageDAO {
     Connection conn = ConnectionUtil.getConnection();
     public Optional<Message> insertMessage(Message message) {
-        try (Connection connection = ConnectionUtil.getConnection()) {
-            String sql = "INSERT INTO messages (posted_by, message_text, time_posted_epoch) VALUES (?, ?, ?) RETURNING *";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, message.getPosted_by());
-            statement.setString(2, message.getMessage_text());
-            statement.setLong(3, message.getTime_posted_epoch());
-
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                return Optional.of(new Message(
-                        resultSet.getInt("message_id"),
-                        resultSet.getInt("posted_by"),
-                        resultSet.getString("message_text"),
-                        resultSet.getLong("time_posted_epoch")
-                ));
+        String sql = "INSERT INTO message (posted_by, message_text, time_posted_epoch) VALUES (?, ?, ?)";
+        try (Connection connection = ConnectionUtil.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            
+            // Set parameters
+            stmt.setInt(1, message.getPosted_by());
+            stmt.setString(2, message.getMessage_text());
+            stmt.setLong(3, message.getTime_posted_epoch());
+    
+            // Execute update
+            int affectedRows = stmt.executeUpdate();
+    
+            // Check if the insertion was successful
+            if (affectedRows > 0) {
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        message.setMessage_id(generatedKeys.getInt(1)); // Set the generated ID
+                        return Optional.of(message); // Return the updated message
+                    }
+                }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace(); // Log the exception
         }
-        return Optional.empty();
+    
+        return Optional.empty(); // Return empty if insertion fails
     }
+                  
+    
 
     public boolean userExists(int userId) {
         try (Connection connection = ConnectionUtil.getConnection()) {

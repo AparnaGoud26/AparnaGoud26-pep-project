@@ -61,11 +61,12 @@ public class SocialMediaController {
         Optional<Account> createdUser = userService.registerUser(user);
     
         if (createdUser.isPresent()) {
-            ctx.status(201).json(createdUser.get()); // Change to 201 Created
+            ctx.status(200).json(createdUser.get()); 
         } else {
             ctx.status(400).result("");
         }
-      }
+    }
+    
     
 
 
@@ -74,7 +75,7 @@ public class SocialMediaController {
         Optional<Account> authenticatedUser = userService.authenticate(user.getUsername(), user.getPassword());
     
         if (authenticatedUser.isPresent()) {
-            ctx.status(200).json(authenticatedUser.get()); // Return user details
+            ctx.status(200).json(authenticatedUser.get()); 
         } else {
             ctx.status(401).result("");
         }
@@ -120,7 +121,7 @@ public class SocialMediaController {
         if (message.isPresent()) {
             ctx.status(200).json(message.get());
         } else {
-            ctx.status(200).result(""); // Ensure an empty response
+            ctx.status(200).result(""); 
         }
     }
 
@@ -137,7 +138,7 @@ public class SocialMediaController {
     
         if (message.isPresent()) {
             messageService.deleteMessage(messageId);
-            ctx.status(200).json(message.get()); // Return deleted message
+            ctx.status(200).json(message.get());
         } else {
             ctx.status(200).result("");
         }
