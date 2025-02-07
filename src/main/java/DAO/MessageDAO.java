@@ -38,7 +38,8 @@ public class MessageDAO {
     
         return Optional.empty(); // Return empty if insertion fails
     }
-                  
+    
+                    
     
 
     public boolean userExists(int userId) {
